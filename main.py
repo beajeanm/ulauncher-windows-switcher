@@ -43,8 +43,10 @@ def store_icon_file(icon, name):
 
 def activate(window):
     workspace = window.get_workspace()
+    if workspace is not None:
     # We need to first activate the workspace, otherwise windows on a different workspace might not become visible
-    workspace.activate(int(time.time()))
+        workspace.activate(int(time.time()))
+
     window.activate(int(time.time()))
 
 

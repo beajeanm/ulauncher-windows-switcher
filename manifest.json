@@ -1,8 +1,8 @@
 {
   "manifest_version": "2",
   "api_version": "1",
-  "name": "Widows switcher",
-  "description": "Extension Description",
+  "name": "Windows switcher",
+  "description": "Search the open windows and quickly switch to it",
   "developer_name": "Jean-Michel Bea",
   "icon": "images/icon.png",
   "options": {
@@ -12,7 +12,7 @@
     {
       "id": "switch_kw",
       "type": "keyword",
-      "name": "Invocation",
+      "name": "Windows switcher",
       "description": "Type this keyword followed by space to start listing your windows.",
       "default_value": "ws"
     }
