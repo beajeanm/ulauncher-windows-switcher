@@ -1,7 +1,6 @@
 import hashlib
 import os
 import time
-
 import gi
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
@@ -13,6 +12,7 @@ from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
 gi.require_version('Gtk', '3.0')
 gi.require_version('Wnck', '3.0')
+from gi.repository import Gtk
 from gi.repository import Wnck
 
 CACHE_DIR = (os.getenv('XDG_CACHE_HOME', os.getenv('HOME') + '/.cache')) + '/ulauncher_window_switcher'
@@ -22,6 +22,9 @@ def list_windows():
     screen = Wnck.Screen.get_default()
     # We need to force the update as screen is populated lazily by default
     screen.force_update()
+    # We need to wait for all events to be processed
+    while Gtk.events_pending():
+        Gtk.main_iteration()
     return [window for window in screen.get_windows() if
             # Do not list sticky windows, or the ulauncher prompt
             window.get_workspace() is not None and window.get_application().get_name() != 'ulauncher']
@@ -40,6 +43,12 @@ def activate(window):
     # We need to first activate the workspace, otherwise windows on a different workspace might not become visible
     workspace.activate(int(time.time()))
     window.activate(int(time.time()))
+
+
+def is_matching(window, keyword):
+    # Assumes UTF-8 input
+    ascii_keyword = keyword.encode().lower()
+    return ascii_keyword in window.get_name().lower() or ascii_keyword in window.get_application().get_name().lower()
 
 
 def render_window(window):
@@ -64,7 +73,11 @@ class WindowSwitcherExtension(Extension):
 
 class KeywordQueryEventListener(EventListener):
     def on_event(self, event, extension):
-        return RenderResultListAction([render_window(window) for window in list_windows()])
+        keyword = event.get_argument()
+        if keyword is None:
+            keyword = ''
+        return RenderResultListAction(
+            [render_window(window) for window in list_windows() if is_matching(window, keyword)])
 
 
 class ItemEnterEventListener(EventListener):
@@ -72,6 +85,7 @@ class ItemEnterEventListener(EventListener):
         for window in list_windows():
             if window.get_xid() == event.get_data():
                 activate(window)
+        Wnck.shutdown()
 
 
 if __name__ == '__main__':
