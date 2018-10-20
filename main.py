@@ -18,6 +18,11 @@ from gi.repository import Wnck
 CACHE_DIR = (os.getenv('XDG_CACHE_HOME', os.getenv('HOME') + '/.cache')) + '/ulauncher_window_switcher'
 
 
+def is_hidden_window(window):
+    state = window.get_state()
+    return state & Wnck.WindowState.SKIP_PAGER or state & Wnck.WindowState.SKIP_TASKLIST
+
+
 def list_windows():
     screen = Wnck.Screen.get_default()
     # We need to force the update as screen is populated lazily by default
@@ -25,9 +30,7 @@ def list_windows():
     # We need to wait for all events to be processed
     while Gtk.events_pending():
         Gtk.main_iteration()
-    return [window for window in screen.get_windows() if
-            # Do not list sticky windows, or the ulauncher prompt
-            window.get_workspace() is not None and window.get_application().get_name() != 'ulauncher']
+    return [window for window in screen.get_windows() if not is_hidden_window(window)]
 
 
 def store_icon_file(icon, name):
