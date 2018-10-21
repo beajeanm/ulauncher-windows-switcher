@@ -33,36 +33,41 @@ def list_windows():
     return [window for window in screen.get_windows() if not is_hidden_window(window)]
 
 
-def store_icon_file(icon, name):
-    # Some app have crazy names, ensure we use something reasonable
-    file_name = hashlib.sha224(name).hexdigest()
-    icon_full_path = CACHE_DIR + '/' + file_name + '.png'
-    icon.savev(icon_full_path, 'png', [], [])
-    return icon_full_path
-
-
 def activate(window):
     workspace = window.get_workspace()
     if workspace is not None:
-    # We need to first activate the workspace, otherwise windows on a different workspace might not become visible
+        # We need to first activate the workspace, otherwise windows on a different workspace might not become visible
         workspace.activate(int(time.time()))
 
     window.activate(int(time.time()))
 
 
-def is_matching(window, keyword):
-    # Assumes UTF-8 input
-    ascii_keyword = keyword.encode().lower()
-    return ascii_keyword in window.get_name().lower() or ascii_keyword in window.get_application().get_name().lower()
+class WindowItem:
 
+    def __init__(self, window):
+        self.id = window.get_xid()
+        self.app_name = window.get_application().get_name()
+        self.title = window.get_name()
+        self.icon = self.retrieve_or_save_icon(window.get_icon())
 
-def render_window(window):
-    window_name = window.get_name()
-    app_name = window.get_application().get_name()
-    return ExtensionResultItem(icon=store_icon_file(window.get_icon(), app_name),
-                               name=app_name,
-                               description=window_name,
-                               on_enter=ExtensionCustomAction(window.get_xid(), keep_app_open=False))
+    def retrieve_or_save_icon(self, icon):
+        # Some app have crazy names, ensure we use something reasonable
+        file_name = hashlib.sha224(self.app_name).hexdigest()
+        icon_full_path = CACHE_DIR + '/' + file_name + '.png'
+        if not os.path.isfile(icon_full_path):
+            icon.savev(icon_full_path, 'png', [], [])
+        return icon_full_path
+
+    def to_extension_item(self):
+        return ExtensionResultItem(icon=self.icon,
+                                   name=self.app_name,
+                                   description=self.title,
+                                   on_enter=ExtensionCustomAction(self.id, keep_app_open=False))
+
+    def is_matching(self, keyword):
+        # Assumes UTF-8 input
+        ascii_keyword = keyword.encode().lower()
+        return ascii_keyword in self.app_name.lower() or ascii_keyword in self.title.lower()
 
 
 class WindowSwitcherExtension(Extension):
@@ -81,8 +86,10 @@ class KeywordQueryEventListener(EventListener):
         keyword = event.get_argument()
         if keyword is None:
             keyword = ''
-        return RenderResultListAction(
-            [render_window(window) for window in list_windows() if is_matching(window, keyword)])
+        window_items = [WindowItem(window) for window in list_windows()]
+        matching_items = [window_item.to_extension_item() for window_item in window_items if
+                          window_item.is_matching(keyword)]
+        return RenderResultListAction(matching_items)
 
 
 class ItemEnterEventListener(EventListener):
