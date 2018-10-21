@@ -6,8 +6,7 @@ from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
-from ulauncher.api.shared.event import ItemEnterEvent
-from ulauncher.api.shared.event import KeywordQueryEvent
+from ulauncher.api.shared.event import ItemEnterEvent, KeywordQueryEvent
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
 gi.require_version('Gtk', '3.0')
@@ -83,12 +82,14 @@ class WindowSwitcherExtension(Extension):
 
 class KeywordQueryEventListener(EventListener):
     def on_event(self, event, extension):
-        keyword = event.get_argument()
-        if keyword is None:
-            keyword = ''
-        window_items = [WindowItem(window) for window in list_windows()]
-        matching_items = [window_item.to_extension_item() for window_item in window_items if
-                          window_item.is_matching(keyword)]
+        query = event.get_argument()
+        if query is None:
+            # The extension has just been triggered, let's initialize the windows list.
+            # (Or we delete all previously typed characters, but we can safely ignore that case)
+            query = ''
+            extension.items = [WindowItem(window) for window in list_windows()]
+        matching_items = [window_item.to_extension_item() for window_item in extension.items if
+                          window_item.is_matching(query)]
         return RenderResultListAction(matching_items)
 
 
