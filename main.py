@@ -14,7 +14,9 @@ gi.require_version('Wnck', '3.0')
 from gi.repository import Gtk
 from gi.repository import Wnck
 
-CACHE_DIR = (os.getenv('XDG_CACHE_HOME', os.getenv('HOME') + '/.cache')) + '/ulauncher_window_switcher'
+XDG_FALLBACK = os.path.join(os.getenv('HOME'), '.cache')
+XDG_CACHE = os.getenv('XDG_CACHE_HOME', XDG_FALLBACK)
+CACHE_DIR = os.path.join(XDG_CACHE,  'ulauncher_window_switcher')
 
 
 def is_hidden_window(window):
@@ -43,11 +45,12 @@ def activate(window):
 
 class WindowItem:
 
-    def __init__(self, window):
+    def __init__(self, window, previous_selection):
         self.id = window.get_xid()
         self.app_name = window.get_application().get_name()
         self.title = window.get_name()
         self.icon = self.retrieve_or_save_icon(window.get_icon())
+        self.is_last = window.get_xid() == previous_selection
 
     def retrieve_or_save_icon(self, icon):
         # Some app have crazy names, ensure we use something reasonable
@@ -61,6 +64,7 @@ class WindowItem:
         return ExtensionResultItem(icon=self.icon,
                                    name=self.app_name,
                                    description=self.title,
+                                   selected_by_default=self.is_last,
                                    on_enter=ExtensionCustomAction(self.id, keep_app_open=False))
 
     def is_matching(self, keyword):
@@ -73,6 +77,8 @@ class WindowSwitcherExtension(Extension):
 
     def __init__(self):
         super(WindowSwitcherExtension, self).__init__()
+        self.selection = None
+        self.previous_selection = None
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
         # Ensure the icon cache directory is created
@@ -87,7 +93,7 @@ class KeywordQueryEventListener(EventListener):
             # The extension has just been triggered, let's initialize the windows list.
             # (Or we delete all previously typed characters, but we can safely ignore that case)
             query = ''
-            extension.items = [WindowItem(window) for window in list_windows()]
+            extension.items = [WindowItem(window, extension.previous_selection) for window in list_windows()]
         matching_items = [window_item.to_extension_item() for window_item in extension.items if
                           window_item.is_matching(query)]
         return RenderResultListAction(matching_items)
@@ -97,6 +103,9 @@ class ItemEnterEventListener(EventListener):
     def on_event(self, event, extension):
         for window in list_windows():
             if window.get_xid() == event.get_data():
+                previous_selection = extension.selection
+                extension.previous_selection = previous_selection
+                extension.selection = window.get_xid()
                 activate(window)
         Wnck.shutdown()
 
