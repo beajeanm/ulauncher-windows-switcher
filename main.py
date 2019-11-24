@@ -54,7 +54,7 @@ class WindowItem:
 
     def retrieve_or_save_icon(self, icon):
         # Some app have crazy names, ensure we use something reasonable
-        file_name = hashlib.sha224(self.app_name).hexdigest()
+        file_name = hashlib.sha224(self.app_name.encode('utf-8')).hexdigest()
         icon_full_path = CACHE_DIR + '/' + file_name + '.png'
         if not os.path.isfile(icon_full_path):
             icon.savev(icon_full_path, 'png', [], [])
@@ -69,8 +69,8 @@ class WindowItem:
 
     def is_matching(self, keyword):
         # Assumes UTF-8 input
-        ascii_keyword = keyword.encode().lower()
-        return ascii_keyword in self.app_name.lower() or ascii_keyword in self.title.lower()
+        ascii_keyword = keyword.encode('ascii').lower()
+        return ascii_keyword in self.app_name.encode('ascii').lower() or ascii_keyword in self.title.encode('ascii').lower()
 
 
 class WindowSwitcherExtension(Extension):
