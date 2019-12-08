@@ -69,8 +69,8 @@ class WindowItem:
 
     def is_matching(self, keyword):
         # Assumes UTF-8 input
-        ascii_keyword = keyword.encode('ascii').lower()
-        return ascii_keyword in self.app_name.encode('ascii').lower() or ascii_keyword in self.title.encode('ascii').lower()
+        ascii_keyword = keyword.encode('utf-8').lower()
+        return ascii_keyword in self.app_name.encode('utf-8').lower() or ascii_keyword in self.title.encode('utf-8').lower()
 
 
 class WindowSwitcherExtension(Extension):
