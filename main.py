@@ -2,6 +2,7 @@ import hashlib
 import os
 import time
 import gi
+gi.require_version('Gdk', '3.0')
 import logging
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
