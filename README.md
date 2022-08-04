@@ -1,6 +1,6 @@
 # Ulauncher windows switcher
 
-### [Ulauncher](https://ulauncher.io) extension for searching your open windows and selecting one.
+### [Ulauncher](https://ulauncher.io) extension for searching your open windows on X11 and selecting one.
 
 ![demo](demo/demo.png)
 
