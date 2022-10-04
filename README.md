@@ -16,3 +16,9 @@ List the windows which title or application name match the query term.
 ## Requirements
 
 * wnck3 (libwnck-3-0 on Ubuntu, libwnck3 on Arch)
+
+To install libwnck-3-0 on **Ubuntu** ->
+```
+$ sudo apt-get update -y
+$ sudo apt-get install -y libwnck-3-0
+```
