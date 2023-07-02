@@ -1,22 +1,26 @@
 import hashlib
+import logging
 import os
 import time
+
 import gi
-gi.require_version('Gdk', '3.0')
-import logging
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
-from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
-from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
+from ulauncher.api.shared.action.ExtensionCustomAction import (
+    ExtensionCustomAction,
+)
+from ulauncher.api.shared.action.RenderResultListAction import (
+    RenderResultListAction,
+)
 from ulauncher.api.shared.event import ItemEnterEvent, KeywordQueryEvent
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
 logger = logging.getLogger(__name__)
 
+gi.require_version("Gdk", "3.0")
 gi.require_version("Gtk", "3.0")
 gi.require_version("Wnck", "3.0")
-from gi.repository import Gtk
-from gi.repository import Wnck
+from gi.repository import Gtk, Wnck
 
 XDG_FALLBACK = os.path.join(os.getenv("HOME"), ".cache")
 XDG_CACHE = os.getenv("XDG_CACHE_HOME", XDG_FALLBACK)
@@ -25,7 +29,10 @@ CACHE_DIR = os.path.join(XDG_CACHE, "ulauncher_window_switcher")
 
 def is_hidden_window(window):
     state = window.get_state()
-    return state & Wnck.WindowState.SKIP_PAGER or state & Wnck.WindowState.SKIP_TASKLIST
+    return (
+        state & Wnck.WindowState.SKIP_PAGER
+        or state & Wnck.WindowState.SKIP_TASKLIST
+    )
 
 
 def list_windows():
@@ -35,7 +42,11 @@ def list_windows():
     # We need to wait for all events to be processed
     while Gtk.events_pending():
         Gtk.main_iteration()
-    return [window for window in screen.get_windows() if not is_hidden_window(window)]
+    return [
+        window
+        for window in screen.get_windows()
+        if not is_hidden_window(window)
+    ]
 
 
 def activate(window):
