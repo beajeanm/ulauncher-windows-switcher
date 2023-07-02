@@ -7,6 +7,6 @@
         "esbenp.prettier-vscode",
         "yzhang.markdown-all-in-one",
         "davidanson.vscode-markdownlint",
-        "emeraldwalk.runonsave",
+        "emeraldwalk.runonsave"
     ]
 }
