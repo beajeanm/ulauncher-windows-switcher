@@ -2,7 +2,7 @@
     "required_api_version": "^2.0.0",
     "name": "Windows switcher",
     "description": "Search the open windows and quickly switch to it. (See README for installation dependencies).",
-    "developer_name": "Jean-Michel Bea & Brandon Cercedo",
+    "developer_name": "Jean-Michel Bea",
     "icon": "images/search.png",
     "options": {
         "query_debounce": 0.1
