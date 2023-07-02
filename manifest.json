@@ -1,19 +1,19 @@
 {
-  "required_api_version": "^2.0.0",
-  "name": "Windows switcher",
-  "description": "Search the open windows and quickly switch to it. (See README for installation dependencies)",
-  "developer_name": "Jean-Michel Bea",
-  "icon": "images/icon.png",
-  "options": {
-    "query_debounce": 0.1
-  },
-  "preferences": [
-    {
-      "id": "switch_kw",
-      "type": "keyword",
-      "name": "Windows switcher",
-      "description": "Type this keyword followed by space to start listing your windows.",
-      "default_value": "ws"
-    }
-  ]
+    "required_api_version": "^2.0.0",
+    "name": "Windows switcher",
+    "description": "Search the open windows and quickly switch to it. (See README for installation dependencies).",
+    "developer_name": "Jean-Michel Bea",
+    "icon": "images/search.png",
+    "options": {
+        "query_debounce": 0.1
+    },
+    "preferences": [
+        {
+            "id": "switch_kw",
+            "type": "keyword",
+            "name": "Windows switcher",
+            "description": "Type this keyword followed by space to start listing your windows.",
+            "default_value": "ws"
+        }
+    ]
 }
