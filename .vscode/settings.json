@@ -1,0 +1,54 @@
+{
+    "black-formatter.args": ["--config", "pyproject.toml"],
+
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+
+    "emeraldwalk.runonsave": {
+        "autoClearConsole": true,
+        "commands": [
+            {
+                "match": "\\.py$",
+                "cmd": "pycln ${file} --config pyproject.toml"
+            }
+        ]
+    },
+
+    "files.autoSave": "onFocusChange",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.exclude": {
+        "**/.git": true,
+        "**/__pycache__": true
+    },
+
+    "git.autofetch": true,
+
+    "isort.args": ["--settings-path", "pyproject.toml"],
+
+    "prettier.configPath": ".prettierrc",
+
+    "python.analysis.typeCheckingMode": "basic",
+    "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.autoIndent": "full",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    }
+}
