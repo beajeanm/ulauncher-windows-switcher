@@ -1,7 +1,6 @@
 import hashlib
 import logging
 import os
-import time
 
 import gi
 from ulauncher.api.client.EventListener import EventListener
@@ -53,9 +52,8 @@ def activate(window):
     workspace = window.get_workspace()
     if workspace is not None:
         # We need to first activate the workspace, otherwise windows on a different workspace might not become visible
-        workspace.activate(int(time.time()))
-
-    window.activate(int(time.time()))
+        workspace.activate(0)
+    window.activate(0)
 
 
 class WindowItem:
