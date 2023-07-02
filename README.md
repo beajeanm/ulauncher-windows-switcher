@@ -2,6 +2,12 @@
 
 [Ulauncher](https://ulauncher.io) extension for searching your open windows on X11 and selecting one.
 
+> <img src="images/search.png" title="Logo" style="width: 20%;">
+> 
+> <a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by riajulislam - Flaticon</a>
+
+## Demo
+
 ![demo](demo/demo.png)
 
 ## Usage
